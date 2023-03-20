@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  client:
+    environment: 
+      - CHOKIDAR_USEPOLLING=true
+      - HOST=0.0.0.0
+      - NODE_ENV=dev
+    build:
+      context: ./client
+      dockerfile: Dockerfile_dev
+    expose:
+      - 3000
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./client:/app
+  server:
+    environment: 
+      - HOST=0.0.0.0
+      - NODE_ENV=dev
+    build:
+      context: ./server
+      dockerfile: Dockerfile_dev
+    expose:
+      - 5000
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./server:/app
+  nginx:
+    image: nginx
+    restart: "no"
+    ports:
+      - 7000:80
+    depends_on:
+      - client
+      - server
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./nginx/dev:/etc/nginx/conf.d 

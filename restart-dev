@@ -1,0 +1,12 @@
+git pull;
+
+# получем имя докер композера 
+# (либо docker compose либо docker-compose)
+# по которому можно обращятся
+source docker-compose-name.sh;
+
+export COMPOSE_PROJECT_NAME=hierarchical-categories_dev
+
+"${DOCKER_COMPOSE[@]}" -f docker-compose.dev.yml down -v;
+"${DOCKER_COMPOSE[@]}" -f docker-compose.dev.yml up -d --build;
+"${DOCKER_COMPOSE[@]}" -f docker-compose.dev.yml logs -f --tail=100;

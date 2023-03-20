@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  server:
+    environment: 
+      - HOST=0.0.0.0
+      - NODE_ENV=prod
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    expose:
+      - 5000
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./server:/app
+  nginx:
+    image: nginx
+    restart: "no"
+    ports:
+      - 80:80
+    depends_on:
+      - server
+    volumes:
+      - ./client/dist:/usr/share/nginx/html
+      - /etc/localtime:/etc/localtime:ro
+      - ./nginx/prod:/etc/nginx/conf.d 
