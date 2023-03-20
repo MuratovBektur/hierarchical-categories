@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <header>
-    <div class="wrapper">client</div>
-  </header>
+  <div>
+    <div class="font-main">client</div>
+  </div>
 </template>
