@@ -3,3 +3,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.tr {
+  @apply text-slate-600 border-b border-slate-300
+ 
+}
+.tr > th, td {
+  @apply  py-4 px-3
+}
+.tr > th {
+  @apply  font-light
+}
+
+.tr > td {
+  @apply font-medium
+}
