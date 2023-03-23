@@ -22,6 +22,10 @@ const categoryTitles = [
   "viewPay",
 ];
 
+const sortDirectionList = ["asc", "desc"];
+
+const defaultSortDirection = sortDirectionList[0];
+
 function getPercent(num) {
   return +(num * 100).toFixed(2);
 }
@@ -58,10 +62,14 @@ function sortCategories(categories, sortType, sortDirection) {
     sortType = categoryTitles[0];
   }
   // тоже самое с направление сортировки
-  if (!["asc", "desc"].includes(sortDirection)) {
-    sortDirection = "desc";
+  if (!sortDirectionList.includes(sortDirection)) {
+    sortDirection = defaultSortDirection;
   }
-  return orderBy(categories, (o) => +o[sortType], [sortDirection]);
+  return orderBy(
+    categories,
+    [sortType, "title"],
+    [sortDirection, defaultSortDirection]
+  );
 }
 
 app.get("/categories", (req, res) => {

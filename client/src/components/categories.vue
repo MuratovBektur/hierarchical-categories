@@ -37,7 +37,7 @@
                 v-if="selectedSortType === category"
                 class="w-5"
                 :class="{
-                  'rotate-180': selectedSortDirection === sortDirections[1],
+                  'rotate-180': selectedSortDirection === sortDirectionList[0],
                 }"
                 src="@/assets/arrow-up.svg"
                 alt="arrow"
@@ -98,14 +98,16 @@ const categoryTitles = [
   "viewPay",
 ] as const;
 
-const sortDirections = ["asc", "desc"] as const;
+const sortDirectionList = ["asc", "desc"] as const;
 
 type categoryTitleType = typeof categoryTitles[number];
 
-type sortDirectionType = typeof sortDirections[number];
+type sortDirectionType = typeof sortDirectionList[number];
+
+const defaultSortDirection: sortDirectionType = sortDirectionList[1];
 
 const selectedSortType = ref<categoryTitleType>(categoryTitles[0]);
-const selectedSortDirection = ref<sortDirectionType>(sortDirections[0]);
+const selectedSortDirection = ref<sortDirectionType>(defaultSortDirection);
 
 async function fetchCategories(
   sortType: categoryTitleType,
@@ -129,17 +131,26 @@ async function fetchCategories(
 async function sortCategories(categoryTitle: categoryTitleType) {
   try {
     isFetching.value = true;
+    // если выбрана тот же тип сортировки(countView, countPlay и т.д),
+    // то меняем направление сортировки
     if (selectedSortType.value === categoryTitle) {
       selectedSortDirection.value =
-        selectedSortDirection.value === "asc" ? "desc" : "asc";
-    } else {
-      selectedSortType.value = categoryTitle;
-      selectedSortDirection.value === "desc";
+        selectedSortDirection.value === sortDirectionList[0]
+          ? sortDirectionList[1]
+          : sortDirectionList[0];
     }
+    // иначе, выбираем дефолтное направлание сортировки
+    // и меняем тип сортировки(countView, countPlay и т.д)
+    else {
+      selectedSortType.value = categoryTitle;
+      selectedSortDirection.value = defaultSortDirection;
+    }
+
     const [res] = await Promise.all([
       fetchCategories(selectedSortType.value, selectedSortDirection.value),
       sleep(500),
     ]);
+
     categories.value = res.categories;
     categoryTotal.value = res?.total;
   } catch (err) {
@@ -150,7 +161,7 @@ async function sortCategories(categoryTitle: categoryTitleType) {
 }
 
 onBeforeMount(async () => {
-  const res = await fetchCategories("countView", "asc");
+  const res = await fetchCategories(categoryTitles[0], defaultSortDirection);
   categories.value = res.categories;
   categoryTotal.value = res?.total;
 });
